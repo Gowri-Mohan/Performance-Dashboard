@@ -4,15 +4,19 @@ import { DataPoint, Series } from '../lib/types'
 import { generateInitialSeries, nextPoint } from '../lib/dataGenerator'
 
 type DataContextValue = {
-  series: Series
-  pushRate: number
-  setPushRate: (r: number) => void
-}
+  series: Series;
+  pushRate: number;
+  setPushRate: (r: number) => void;
+  timeRange: [number, number] | null;
+  setTimeRange: React.Dispatch<React.SetStateAction<[number, number] | null>>;
+};
+
 
 const DataContext = createContext<DataContextValue | null>(null)
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [series, setSeries] = useState<Series>(() => generateInitialSeries(5000))
+  const [timeRange, setTimeRange] = useState<[number, number] | null>(null);
   const pushRateRef = useRef(100) // ms
   const [pushRate, setPushRate] = useState(100)
 
@@ -43,7 +47,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <DataContext.Provider value={{ series, pushRate, setPushRate }}>
+    <DataContext.Provider value={{ series, pushRate, setPushRate, timeRange, setTimeRange }}>
       {children}
     </DataContext.Provider>
   )

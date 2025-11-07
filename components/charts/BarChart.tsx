@@ -6,25 +6,33 @@ import { clearCanvas } from '../../lib/canvasUtils'
 
 export default function BarChart() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const { series } = useData()
+  const { series, timeRange } = useData()
 
-  const buckets = useMemo(() => {
-    const size = 100
-    const arr = new Array(size).fill(0)
-    const start = Math.max(0, series.length - 5000)
-    for (let i = start; i < series.length; i++) {
-      const idx = Math.floor(((i - start) / Math.max(1, series.length - start)) * size)
-      arr[idx] += Math.abs(series[i].v)
+  const bars = useMemo(() => {
+    if (!series.length) return []
+    const filtered = timeRange
+      ? series.filter((p) => p.t >= timeRange[0] && p.t <= timeRange[1])
+      : series.slice(-10000)
+
+    const start = filtered[0]?.t ?? 0
+    const end = filtered[filtered.length - 1]?.t ?? start
+    const interval = (end - start) / 50 // 50 bars max
+
+    const buckets = new Array(50).fill(0)
+    for (const p of filtered) {
+      const idx = Math.min(49, Math.floor((p.t - start) / interval))
+      buckets[idx] += Math.abs(p.v)
     }
-    return arr
-  }, [series])
+    return buckets
+  }, [series, timeRange])
 
   useChartRenderer(canvasRef, (ctx) => {
     clearCanvas(ctx)
     const { width, height } = ctx.canvas
-    const w = width / buckets.length
-    for (let i = 0; i < buckets.length; i++) {
-      const h = Math.min(height, (buckets[i] / Math.max(...buckets)) * height)
+    const w = width / bars.length
+    const max = Math.max(...bars)
+    for (let i = 0; i < bars.length; i++) {
+      const h = (bars[i] / max) * height
       ctx.fillStyle = 'rgba(96,165,250,0.6)'
       ctx.fillRect(i * w, height - h, w - 1, h)
     }
