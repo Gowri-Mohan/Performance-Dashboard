@@ -6,7 +6,8 @@ import { clearCanvas } from '../../lib/canvasUtils'
 
 export default function ScatterPlot() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const { series } = useData()
+  const { series, timeRange } = useData()
+
   const points = useMemo(() => {
     if (!series.length) return []
     if (!timeRange) return series.slice(Math.max(0, series.length - 20000))
