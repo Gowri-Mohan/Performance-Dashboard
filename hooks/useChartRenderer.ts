@@ -7,30 +7,31 @@ export default function useChartRenderer(canvasRef: React.RefObject<HTMLCanvasEl
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')!
+    if (!canvas) return              // ✅ safety check
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return                 // ✅ safety check
+
     function resize() {
       const rect = canvas.getBoundingClientRect()
       const dpr = window.devicePixelRatio || 1
       canvas.width = Math.floor(rect.width * dpr)
       canvas.height = Math.floor(rect.height * dpr)
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      ctx.scale(dpr, dpr)
     }
     resize()
     window.addEventListener('resize', resize)
 
-    function loop(ts: number) {
-      if (lastRef.current == null) lastRef.current = ts
-      const dt = ts - lastRef.current
-      lastRef.current = ts
-      render(ctx, dt)
-      rafRef.current = requestAnimationFrame(loop)
+    let raf = 0
+    const loop = (ts: number) => {
+      render(ctx, ts)
+      raf = requestAnimationFrame(loop)
     }
-    rafRef.current = requestAnimationFrame(loop)
+    raf = requestAnimationFrame(loop)
+
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasRef, render])
+
 }
