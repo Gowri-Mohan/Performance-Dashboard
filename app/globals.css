@@ -1,36 +1,96 @@
-:root{
-  --bg:#0f172a;
-  --card:#0b1220;
-  --muted:#94a3b8;
-  --accent:#60a5fa;
-  --text:#e6eef8;
+:root {
+  --bg: #0f172a;
+  --card: #0b1220;
+  --muted: #94a3b8;
+  --accent: #60a5fa;
+  --text: #e6eef8;
 }
-html,body,#root{height:100%}
-body{
-  margin:0;
-  background:#071025;
-  color:var(--text);
+
+/* Base */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #071025;
+  color: var(--text);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
-.container{
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
+
+/* Layout Containers */
+.container {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap; /* ✅ allows mobile stacking */
+  padding: 12px;
+  box-sizing: border-box;
 }
-.sidebar{
-  width:320px;
-  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-  border-radius:10px;
-  padding:12px;
+
+/* Sidebar */
+.sidebar {
+  width: 320px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.02));
+  border-radius: 10px;
+  padding: 12px;
+  flex-shrink: 0;
 }
-.canvas-wrap{
-  flex:1;
-  background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-  padding:12px;
-  border-radius:10px;
-  min-height:520px;
+
+/* Canvas Wrap (Charts Area) */
+.canvas-wrap {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.02));
+  padding: 12px;
+  border-radius: 10px;
+  min-height: 520px;
 }
-.controls-row{display:flex; gap:8px; align-items:center; margin-bottom:8px}
-.small{font-size:0.9rem; color:var(--muted)}
+
+/* Controls Row */
+.controls-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.small {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* ✅ Responsive layout tweaks */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .canvas-wrap {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .canvas-wrap {
+    padding: 8px;
+    min-height: 320px;
+  }
+
+  .controls-row {
+    flex-wrap: wrap;
+  }
+
+  .small {
+    font-size: 0.8rem;
+  }
+}
